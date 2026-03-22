@@ -1,0 +1,25 @@
+---
+- name: Apply system hardening roles
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Configure Firewall
+      when: harden_firewall | bool
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.firewall
+      vars:
+        firewall:
+          - service: http
+            state: enabled
+          - service: https
+            state: enabled
+
+    - name: Configure Timesync
+      when: harden_time | bool
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.timesync
+      vars:
+        timesync_ntp_servers:
+          - hostname: pool.ntp.org
+            iburst: yes
