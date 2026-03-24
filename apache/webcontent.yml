@@ -1,0 +1,7 @@
+---
+- name: Deploy web content
+  hosts: Webserver
+  become: true
+
+  roles:
+    - role_webcontent
