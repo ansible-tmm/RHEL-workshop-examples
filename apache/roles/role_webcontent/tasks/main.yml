@@ -1,4 +1,40 @@
 ---
+- name: latest Apache version installed
+  ansible.builtin.yum:
+    name: httpd
+    state: latest
+  notify: apache-restart
+
+- name: latest firewalld version installed
+  ansible.builtin.yum:
+    name: firewalld
+    state: latest
+
+- name: firewalld enabled and running
+  ansible.builtin.service:
+    name: firewalld
+    enabled: true
+    state: started
+
+- name: firewalld permits http service
+  ansible.posix.firewalld:
+    service: http
+    permanent: true
+    state: enabled
+    immediate: yes
+
+- name: Apache enabled and running
+  ansible.builtin.service:
+    name: httpd
+    enabled: true
+    state: started
+
+- name: Ensure proper Apache configuration
+  ansible.builtin.copy:
+    src: httpd.conf
+    dest: /etc/httpd/conf/httpd.conf
+  notify: apache-restart
+
 - name: Deploy index.html from template
   ansible.builtin.template:
     src: "{{ stage }}_index.html.j2"
